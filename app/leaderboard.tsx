@@ -1,9 +1,16 @@
 'use client'
 import {
+    PropsWithChildren,
     useEffect,
-    useRef
+    useRef, useState
 } from "react";
-import {Accordion, AccordionItem} from "@nextui-org/react";
+
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger
+} from "@/components/ui/accordion";
 
 export default function Leaderboard() {
     let regionData = useRef('');
@@ -17,12 +24,18 @@ export default function Leaderboard() {
     }, []);
 
     return (
-        <div className={"flex h-auto"}>
-            <div className={"flex flex-row bg-leaderboard h-auto w-5/6 p6 rounded-2xl shadow-md px-10"}>
-                <div className={"w-1/4"}>hello world</div>
-                <div className={"w-1/6 border-l-black"}>Hi</div>
-                <div>{regionData.current}</div>
+        <>
+            <div className={"flex w-9/12 h-auto mx-64 rounded-lg bg-leaderboard"}>
+                <Accordion type="single" collapsible className={"bg-leaderboard"}>
+                    <AccordionItem value="item-1">
+                        <AccordionTrigger>Is it accessible?</AccordionTrigger>
+                        <AccordionContent>
+                            Yes. It adheres to the WAI-ARIA design pattern.
+                        </AccordionContent>
+                    </AccordionItem>
+                </Accordion>
             </div>
-        </div>
+        </>
+
     )
 }

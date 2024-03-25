@@ -4,13 +4,52 @@ import {useState, useEffect} from "react";
 import RestingImage from '../public/mumu_image_1.png';
 import SlapImage from '../public/mumu_image_2.png'
 import Leaderboard from "@/app/leaderboard";
-
-
+import axios, {AxiosResponse} from "axios";
 
 export default function Home() {
     const [active, setActive] = useState(false);
-    const [count, setCount] = useState(0)
+    const [count, setCount] = useState(0);
+    const [lastActiveCount, setLastActiveCount] = useState(0);
+    const [regionData, setRegionData] = useState(null);
+    const [jwt, setJwt] = useState(null);
     const imageKey = active ? SlapImage.src : RestingImage.src;
+
+    useEffect(() => {
+        fetch('/api/jwt')
+            .then((res) => res.json())
+            .then((data) => console.log(data))
+            .then(() => console.log(jwt));
+    }, [])
+
+    useEffect(() => {
+        fetch('/api/region')
+            .then((res) => res.json())
+            .then((data) => {
+                setRegionData(data.country)
+            })
+            .then(() => console.log(regionData));
+    }, [])
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            if (count != lastActiveCount) {
+                fetch('/api/flush-clicks', {
+                    body: JSON.stringify({ clicks: count - lastActiveCount, region: regionData }),
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+                    .then((res) => console.log(res))
+                console.log('UPDATE');
+                setLastActiveCount(count);
+            }
+        }, 1000);
+        return () => clearInterval(interval);
+    }, [])
+
+
+
     const slap = () => {
       setActive(true);
       setCount(count + 1)
